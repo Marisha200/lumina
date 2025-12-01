@@ -5,7 +5,7 @@ import google.generativeai as genai
 st.set_page_config(page_title="Mi IA Personal", page_icon="✨")
 
 st.title("✨ Mi Asistente IA")
-st.write("Pregúntame lo que quieras sobre el Mapa de Sueños 2026.")
+st.write("Pregúntame lo que quieras sobre Lumina.")
 
 # 2. Conexión segura con Google (La llave NO está aquí, la busca en la caja fuerte)
 # Si no hay llave, mostramos un aviso.
