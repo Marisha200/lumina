@@ -17,7 +17,7 @@ else:
 # --- CEREBRO DE LA IA ---
 # Usamos el modelo exacto que encontraste en la lista
 # Nota: Le quitamos el prefijo 'models/' para que funcione mejor
-nombre_modelo = "gemini-2.5-pro-preview-03-25"
+nombre_modelo = "gemini-1.5-flash"
 
 try:
     model = genai.GenerativeModel(nombre_modelo)
