@@ -2,9 +2,9 @@ import streamlit as st
 import google.generativeai as genai
 
 # 1. Configuración de la página
-st.set_page_config(page_title="Mapa de Sueños 2026", page_icon="✨")
+st.set_page_config(page_title="Lumina", page_icon="✨")
 
-st.title("✨ Asistente de Sueños 2026")
+st.title("✨ Lumina Oracle")
 st.write("Estoy aquí para ayudarte a crear tu mapa y definir tus propósitos.")
 
 # 2. Conexión segura con Google
