@@ -1,57 +1,58 @@
 import streamlit as st
 import google.generativeai as genai
 
+# --- CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(page_title="Lumina", page_icon="✨")
 st.title("✨ Lumina")
+st.write("Cuéntame tus metas y diseñemos juntos tu 2026.")
 
-# 1. Configuración de API Key
+# --- CONEXIÓN CON GOOGLE (SEGURIDAD) ---
 if "GOOGLE_API_KEY" in st.secrets:
     api_key = st.secrets["GOOGLE_API_KEY"]
     genai.configure(api_key=api_key)
 else:
-    st.error("⚠️ Falta la API Key en los Secrets.")
+    st.error("⚠️ Falta la API Key en los Secrets de Streamlit.")
     st.stop()
 
-# 2. Selección de Modelo (AQUÍ ESTÁ LA SOLUCIÓN)
-# Intentamos conectar con el modelo Flash
-nombre_modelo = "gemini-1.5-flash"
+# --- CEREBRO DE LA IA ---
+# Usamos el modelo exacto que encontraste en la lista
+# Nota: Le quitamos el prefijo 'models/' para que funcione mejor
+nombre_modelo = "gemini-2.5-pro-preview-03-25"
 
 try:
     model = genai.GenerativeModel(nombre_modelo)
-    # Hacemos una prueba silenciosa para ver si conecta
-    test = model.generate_content("test")
 except Exception as e:
-    # SI FALLA, mostramos ayuda en pantalla para saber qué pasa
-    st.warning(f"No pudimos conectar con '{nombre_modelo}'.")
-    st.info("Buscando modelos disponibles para tu clave...")
-    
-    try:
-        st.write("Estos son los modelos que Google permite usar con tu clave:")
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                st.code(m.name) # Te mostrará nombres como models/gemini-pro
-    except:
-        st.error("Error grave: Tu API Key no parece funcionar o no tiene permisos.")
-    
-    st.stop() # Detenemos la app hasta que se arregle el modelo
+    st.error(f"Error al cargar el modelo {nombre_modelo}: {e}")
+    st.stop()
 
-# 3. El Chat (Solo carga si lo de arriba funcionó)
+# --- MEMORIA DEL CHAT ---
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "¡Hola! ¿En qué te ayudo con Lumina?"}]
+    st.session_state.messages = []
 
+# Mostrar historial en pantalla
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Escribe aquí..."):
+# --- INTERACCIÓN ---
+if prompt := st.chat_input("Escribe aquí tu idea, sueño o duda..."):
+    # 1. Mostrar lo que tú escribiste
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
+    # 2. Generar respuesta de la IA
     with st.chat_message("assistant"):
+        message_placeholder = st.empty()
         try:
+            # Enviamos el mensaje a Google
             response = model.generate_content(prompt)
-            st.markdown(response.text)
+            
+            # Mostramos la respuesta
+            message_placeholder.markdown(response.text)
+            
+            # Guardamos en memoria
             st.session_state.messages.append({"role": "assistant", "content": response.text})
+            
         except Exception as e:
-            st.error(f"Error respondiendo: {e}")
+            message_placeholder.error(f"Error de conexión: {e}")
